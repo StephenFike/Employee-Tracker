@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const db = require('./config/connection.js');
 const consoleT = require('console.table');
+const { clear } = require('console');
 
 // conect to mysql
 db.connect(err => {
@@ -45,7 +46,7 @@ function promptMain() {
                 addEmployee();
                 break;
             case 'Update an employees role':
-                updateEmployeeRole();
+                // Add funciton here updateEmployeeRole()
                 break;
         }
     })
@@ -159,7 +160,6 @@ function addRole() {
     ])
     .then(answer => {
         let params = [answer.role, answer.salary];
-
         let dsql = `SELECT department_name AS Name, id AS ID FROM department;`
 
         db.promise().query(dsql)
@@ -175,7 +175,7 @@ function addRole() {
                     }
                 ])
                 .then(answer => {
-                    let department = answer.department_id;
+                    let department = answer.departments;
                     params.push(department);
 
                     let sql = `INSERT INTO roles (title, salary, department_id)
@@ -183,10 +183,94 @@ function addRole() {
 
                     db.promise().query(sql, params)
                         .then(() => {
-                            console.log(`Role added!`)
+                            console.log(`Role added!`);
                             promptMain();
                         })
                 })
             })
     })
+};
+
+function addEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first',
+            message: 'What is the employees first name?',
+            validate: input => {
+                if(input) {
+                    return true;
+                } else {
+                    console.log('Please input the first name!')
+                    return false;
+                }
+            }
+        
+        },
+        {
+            type: 'input',
+            name: 'last',
+            message: 'What is the employees last name?',
+            validate: input => {
+                if(input) {
+                    return true;
+                } else {
+                    console.log('Please input the last name!')
+                    return false;
+                }
+            }
+        },
+   ])
+   .then(answer => {
+       let choices = [answer.first, answer.last];
+       let rsql = `SELECT title AS Title, id as ID FROM roles;`
+
+       db.promise().query(rsql)
+        .then(([rows]) => {
+            let roles = rows.map(({ Title, ID}) => ({name: Title, value: ID}));
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Which role will the employee have?',
+                    choices: roles
+                }
+            ])
+            .then(answer => {
+                let role = answer.role
+                choices.push(role)
+                
+                let msql= `SELECT id AS ID, first_name AS First_name
+                            FROM employee;`
+
+                db.promise().query(msql)
+                    .then(([rows]) => {
+                        let manager = rows.map(({ First_name, ID }) => ({ name: First_name, value: ID}))
+
+                        inquirer.prompt([
+                            {
+                                type: 'list',
+                                name:'manager',
+                                message: 'Who will be the employees manager?',
+                                choices: manager
+                            }
+                        ])
+                        .then(answer => {
+                            let managerChoice = answer.manager;
+                            choices.push(managerChoice);
+
+                            let sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                                        VALUES (?, ?, ?, ?);`
+                            
+                            db.promise().query(sql, choices)
+                                .then(() => {
+                                    console.log('Employee added!')
+                                    promptMain();
+                                })
+                        })
+                    })
+            })
+        })
+   })
 }
