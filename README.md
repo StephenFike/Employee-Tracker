@@ -28,7 +28,7 @@ Github: [StephenFike](https://github.com/StephenFike)
 Email: [sfike98@gmail.com](mailto:sfike98@gmail.com)
 
 ## Screenshot
-![app screenshot](/assets/images/example.jpg)
+![app screenshot](/assets/images/example.JPG)
 
 ## License
 Copyright (c) 2022 Employee-Tracker
