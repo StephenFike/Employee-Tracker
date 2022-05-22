@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const db = require('./config/connection.js');
 const consoleT = require('console.table');
-const { clear } = require('console');
 
 // conect to mysql
 db.connect(err => {

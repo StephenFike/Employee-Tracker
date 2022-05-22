@@ -17,7 +17,7 @@ Using an SQL Database, track the departments, roles, and employees within a comp
 Clone the repo, run 'npm i' in the console.
 
 ## Usage
-Run 'Node index.js' and follow the prompts! For a tutorial video click [here!]()
+Run 'Node index.js' and follow the prompts! For a tutorial video click [here!](https://drive.google.com/file/d/1jISTV-As7yj53GlBS-RlyquBCWyDtEOt/view)
 
 ## Made with
 JavaScript
